@@ -39,7 +39,7 @@ final class APIManager {
         }
         
         var urlRequest = URLRequest(url: url)
-//        urlRequest.httpMethod = "GET"
+        urlRequest.httpMethod = "GET"
         
         urlRequest.addValue(apiKey, forHTTPHeaderField: "Authorization")
 //        print(urlRequest)
@@ -53,7 +53,23 @@ final class APIManager {
     
     // MARK: - Handle Response
     private static func searchPhotosHandler(data: Data?, response: URLResponse?, error: Error?) {
-        print("Method searchPhotosHandler was called")
-    
+        if let error = error {
+            print(error.localizedDescription)
+        } else if let data = data {
+            do {
+//                let jsonObject = try JSONSerialization.jsonObject(with: data)
+//                print(jsonObject)
+                
+                let model = try JSONDecoder().decode(SearchPhotosModel.self, from: data)
+                print(model)
+                
+            } catch {
+                print(error.localizedDescription)
+            }
+        }
+        
+        if let urlResponse = response, let httpResponse = urlResponse as? HTTPURLResponse {
+            print("HTTP status: \(httpResponse.statusCode)")
+        }
     }
 }
