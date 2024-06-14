@@ -19,6 +19,13 @@ final class PhotoCollectionViewCell: UICollectionViewCell {
         return image
     }()
     
+    private lazy var activityIndicator: UIActivityIndicatorView = {
+       let indicator = UIActivityIndicatorView()
+        indicator.hidesWhenStopped = true
+        indicator.color = .darkGray
+        return indicator
+    }()
+    
     // MARK: - Initializer
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -37,6 +44,7 @@ final class PhotoCollectionViewCell: UICollectionViewCell {
     // MARK: - Methods
     private func setupUI() {
         addSubview(imageView)
+        addSubview(activityIndicator)
         setupConstraints()
     }
     
@@ -44,16 +52,41 @@ final class PhotoCollectionViewCell: UICollectionViewCell {
         imageView.snp.makeConstraints { make in
             make.top.trailing.bottom.leading.equalToSuperview()
         }
+        
+        activityIndicator.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+        }
     }
     func loadImage(witch model: PhotoModel) {
+        activityIndicator.startAnimating()
+        
         if let url = URL(string: model.src.medium) {
             let session = URLSession.shared.dataTask(with: url) { data, response, error in
+                if self.urlAreSame(currentPhotoURl: model.src.medium, response: response?.url?.absoluteString) {
+                    DispatchQueue.main.async {
+                        self.activityIndicator.stopAnimating()
+                    }
+                }
+                
                 guard let data = data else { return }
+                
                 DispatchQueue.main.async {
                     self.imageView.image = UIImage(data: data)
                 }
             }
             session.resume()
         }
+    }
+    
+    private func urlAreSame(currentPhotoURl: String?, response: String?) -> Bool {
+        guard let currentPhotoUrl = currentPhotoURl, let response = response else {
+            print("Current photo URL or response url are absent")
+            return false
+        }
+        guard currentPhotoUrl == response else {
+            print("currentPhotoUrl and response are different")
+            return false
+        }
+        return true
     }
 }
