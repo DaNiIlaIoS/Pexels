@@ -7,15 +7,9 @@
 
 import Foundation
 
-// This file was generated from JSON Schema using quicktype, do not modify it directly.
-// To parse the JSON, add this file to your project and do:
-//
-//   let searchPhotosModel = try? JSONDecoder().decode(SearchPhotosModel.self, from: jsonData)
-
-// MARK: - SearchPhotosModel
 struct SearchPhotosModel: Codable {
     let totalResults, page, perPage: Int
-    let photos: [Photo]
+    let photos: [PhotoModel]
     let nextPage: String
 
     enum CodingKeys: String, CodingKey {
