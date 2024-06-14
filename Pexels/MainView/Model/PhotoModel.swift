@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Photo: Codable {
+struct PhotoModel: Codable {
     let id, width, height: Int
     let url: String
     let photographer: String
@@ -26,6 +26,4 @@ struct Photo: Codable {
         case src, liked, alt
     }
 }
-
-// MARK: - Src
 

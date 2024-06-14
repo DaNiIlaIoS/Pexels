@@ -10,11 +10,15 @@ import UIKit
 
 final class APIManager {
     // MARK: - Properties
-    private static let endpoint = "https://api.pexels.com/v1/search"
-    private static let apiKey = "w4pGwK3YPe99YEpYL8UFCNBMt8QheaPMJaxHCbhbJE9iiNHeTSzhNMAR"
+    static let shared = APIManager()
+    
+    private init() { }
+    
+    private let endpoint = "https://api.pexels.com/v1/search"
+    private let apiKey = "w4pGwK3YPe99YEpYL8UFCNBMt8QheaPMJaxHCbhbJE9iiNHeTSzhNMAR"
     
     // MARK: - Create url path and make request
-    static func search(_ searchBar: UISearchBar) {
+    func search(_ searchBar: UISearchBar, completion: @escaping (Result<[PhotoModel], Error>) -> Void) {
         guard let searchText = searchBar.text else {
             print("Search bar text is nil")
             return
@@ -30,7 +34,7 @@ final class APIManager {
         }
         
         let parameters = [URLQueryItem(name: "query", value: searchText),
-                          URLQueryItem(name: "per_page", value: "10")]
+                          URLQueryItem(name: "per_page", value: "20")]
         urlComponents.queryItems = parameters
         
         guard let url = urlComponents.url else {
@@ -42,30 +46,49 @@ final class APIManager {
         urlRequest.httpMethod = "GET"
         
         urlRequest.addValue(apiKey, forHTTPHeaderField: "Authorization")
-//        print(urlRequest)
+        //        print(urlRequest)
         
         let urlSession = URLSession.shared.dataTask(with: urlRequest) { data, response, error in
-            searchPhotosHandler(data: data, response: response, error: error)
+            self.searchPhotosHandler(data: data, response: response, error: error, completion: completion)
         }
         
         urlSession.resume()
     }
-    
+    func getImage(url: String, completion: @escaping (Result<Data, Error>) -> Void) {
+        guard let url = URL(string: url) else {
+            print("Could't create an url")
+            return
+        }
+        let session = URLSession.shared.dataTask(with: url) { data, response, error in
+            if let data = data {
+                completion(.success(data))
+            }
+            if let error = error {
+                completion(.failure(error))
+            }
+        }
+        session.resume()
+    }
     // MARK: - Handle Response
-    private static func searchPhotosHandler(data: Data?, response: URLResponse?, error: Error?) {
+    private func searchPhotosHandler(data: Data?,
+                                     response: URLResponse?,
+                                     error: Error?,
+                                     completion: (Result<[PhotoModel], Error>) -> Void) {
         if let error = error {
-            print(error.localizedDescription)
+            completion(.failure(NetworkingError.networkingError(error)))
         } else if let data = data {
             do {
-//                let jsonObject = try JSONSerialization.jsonObject(with: data)
-//                print(jsonObject)
-                
+                //                let jsonObject = try JSONSerialization.jsonObject(with: data)
+                //                print(jsonObject)
                 let model = try JSONDecoder().decode(SearchPhotosModel.self, from: data)
+                completion(.success(model.photos))
                 print(model)
                 
             } catch {
                 print(error.localizedDescription)
             }
+        } else {
+            completion(.failure(NetworkingError.unknownError))
         }
         
         if let urlResponse = response, let httpResponse = urlResponse as? HTTPURLResponse {
@@ -73,3 +96,5 @@ final class APIManager {
         }
     }
 }
+
+
