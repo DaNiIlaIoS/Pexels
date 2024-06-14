@@ -69,6 +69,7 @@ final class APIManager {
         }
         session.resume()
     }
+    
     // MARK: - Handle Response
     private func searchPhotosHandler(data: Data?,
                                      response: URLResponse?,

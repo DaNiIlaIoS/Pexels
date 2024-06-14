@@ -22,7 +22,7 @@ final class HistoryCollectionViewCell: UICollectionViewCell {
     }()
     
     private lazy var stackView: UIStackView = {
-       let stackView = UIStackView()
+        let stackView = UIStackView()
         stackView.axis = .horizontal
         stackView.distribution = .fill
         stackView.alignment = .fill
@@ -31,14 +31,14 @@ final class HistoryCollectionViewCell: UICollectionViewCell {
     }()
     
     private lazy var clockImage: UIImageView = {
-       let view = UIImageView()
+        let view = UIImageView()
         view.image = UIImage(systemName: "clock")
         view.tintColor = .lightGray
         return view
     }()
     
     private lazy var historyLabel: UILabel = {
-       let label = UILabel()
+        let label = UILabel()
         label.text = "Nature"
         label.textColor = .lightGray
         label.font = .systemFont(ofSize: 15)
@@ -84,5 +84,9 @@ final class HistoryCollectionViewCell: UICollectionViewCell {
         clockImage.snp.makeConstraints { make in
             make.width.height.equalTo(24)
         }
+    }
+    
+    func set(title: String) {
+        historyLabel.text = title
     }
 }

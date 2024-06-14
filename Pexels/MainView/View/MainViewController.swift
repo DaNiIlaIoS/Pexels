@@ -30,7 +30,7 @@ class MainViewController: UIViewController {
         layout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
         
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-
+        
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.dataSource = self
         collectionView.delegate = self
@@ -60,7 +60,11 @@ class MainViewController: UIViewController {
     private var apiManager = APIManager.shared
     
     var photos: [PhotoModel] = []
-    
+    var searchTextArray: [String] = [] {
+        didSet {
+            self.historyCollectionView.reloadData()
+        }
+    }
     // MARK: - Life Cycle
     init(apiManager: APIManager = APIManager.shared) {
         self.apiManager = apiManager
@@ -82,6 +86,8 @@ class MainViewController: UIViewController {
         
         searchBar.placeholder = "search image".localized
         searchBar.delegate = self
+        
+        searchTextArray = getSaveSearchText()
     }
     
     // MARK: - Methods
@@ -120,18 +126,33 @@ class MainViewController: UIViewController {
                 }
                 
                 switch result {
+                    
                 case .success(let data):
                     if self?.photosCollectionView.refreshControl?.isRefreshing == true {
                         self?.photosCollectionView.refreshControl?.endRefreshing()
                     }
                     self?.photos = data
                     self?.photosCollectionView.reloadData()
+                    self?.saveText(searchText: self?.searchBar.text ?? "")
                     
                 case .failure(let error):
                     print(error.localizedDescription)
                 }
             }
         }
+    }
+    
+    private func saveText(searchText: String) {
+        var existingArray = getSaveSearchText()
+        existingArray.append(searchText)
+        
+        UserDefaults.standard.set(existingArray, forKey: "userDefaults")
+        searchTextArray = existingArray
+    }
+    
+    private func getSaveSearchText() -> [String] {
+        let array: [String] = UserDefaults.standard.stringArray(forKey: "userDefaults") ?? []
+        return array
     }
 }
 
@@ -162,7 +183,7 @@ extension MainViewController: UICollectionViewDataSource {
         case photosCollectionView:
             return photos.count
         case historyCollectionView:
-            return 5
+            return searchTextArray.count
         default:
             return 0
         }
@@ -180,7 +201,7 @@ extension MainViewController: UICollectionViewDataSource {
             return cell
         case historyCollectionView:
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "HistoryCollectionViewCell", for: indexPath) as? HistoryCollectionViewCell else { return UICollectionViewCell() }
-            
+            cell.set(title: searchTextArray[indexPath.item])
             return cell
         default:
             return UICollectionViewCell()
@@ -190,6 +211,12 @@ extension MainViewController: UICollectionViewDataSource {
 
 // MARK: - UICollectionViewDelegateFlowLayout
 extension MainViewController: UICollectionViewDelegateFlowLayout {
-    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let photo = photos[indexPath.item]
+        let url = photo.src.large2X
+        
+        let imageScrollViewController = ImageScrollViewController(imageURL: url)
+        self.navigationController?.pushViewController(imageScrollViewController, animated: true)
+    }
 }
 
