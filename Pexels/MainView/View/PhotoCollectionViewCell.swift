@@ -20,7 +20,7 @@ final class PhotoCollectionViewCell: UICollectionViewCell {
     }()
     
     private lazy var activityIndicator: UIActivityIndicatorView = {
-       let indicator = UIActivityIndicatorView()
+        let indicator = UIActivityIndicatorView()
         indicator.hidesWhenStopped = true
         indicator.color = .darkGray
         return indicator
@@ -60,22 +60,24 @@ final class PhotoCollectionViewCell: UICollectionViewCell {
     func loadImage(witch model: PhotoModel) {
         activityIndicator.startAnimating()
         
-        if let url = URL(string: model.src.medium) {
-            let session = URLSession.shared.dataTask(with: url) { data, response, error in
-                if self.urlAreSame(currentPhotoURl: model.src.medium, response: response?.url?.absoluteString) {
-                    DispatchQueue.main.async {
-                        self.activityIndicator.stopAnimating()
-                    }
+        guard let url = URL(string: model.src.medium) else { return }
+        let session = URLSession.shared.dataTask(with: url) { data, response, error in
+            
+            if self.urlAreSame(currentPhotoURl: model.src.medium, response: response?.url?.absoluteString) {
+                DispatchQueue.main.async {
+                    self.activityIndicator.stopAnimating()
                 }
-                
-                guard let data = data else { return }
-                
+            }
+            
+            if let error = error {
+                print("Error: \(error.localizedDescription)")
+            } else if let data = data {
                 DispatchQueue.main.async {
                     self.imageView.image = UIImage(data: data)
                 }
             }
-            session.resume()
         }
+        session.resume()
     }
     
     private func urlAreSame(currentPhotoURl: String?, response: String?) -> Bool {
