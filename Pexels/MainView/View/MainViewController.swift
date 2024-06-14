@@ -48,6 +48,8 @@ class MainViewController: UIViewController {
         
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         
+        collectionView.refreshControl = UIRefreshControl()
+        collectionView.refreshControl?.addTarget(self, action: #selector(loadData), for: .valueChanged)
         collectionView.dataSource = self
         collectionView.delegate = self
         
@@ -109,13 +111,22 @@ class MainViewController: UIViewController {
         }
     }
     
+    @objc
     private func loadData() {
         apiManager.search(searchBar) { [weak self] result in
             DispatchQueue.main.async {
+                if self?.photosCollectionView.refreshControl?.isRefreshing == false {
+                    self?.photosCollectionView.refreshControl?.beginRefreshing()
+                }
+                
                 switch result {
                 case .success(let data):
+                    if self?.photosCollectionView.refreshControl?.isRefreshing == true {
+                        self?.photosCollectionView.refreshControl?.endRefreshing()
+                    }
                     self?.photos = data
                     self?.photosCollectionView.reloadData()
+                    
                 case .failure(let error):
                     print(error.localizedDescription)
                 }
