@@ -160,8 +160,18 @@ class MainViewController: UIViewController {
         return reversedArray
     }
     
+    private func getUniqueSearchArray() -> [String] {
+        var uniqueArray: [String] = []
+        getReversedSearchArray().forEach { value in
+            if !uniqueArray.contains(value) {
+                uniqueArray.append(value)
+            }
+        }
+        return uniqueArray
+    }
+    
     private func resetSearchTextArray() {
-        self.searchTextArray = getReversedSearchArray()
+        self.searchTextArray = getUniqueSearchArray()
     }
 }
 
