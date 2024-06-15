@@ -50,6 +50,7 @@ class MainViewController: UIViewController {
         
         collectionView.refreshControl = UIRefreshControl()
         collectionView.refreshControl?.addTarget(self, action: #selector(loadData), for: .valueChanged)
+
         collectionView.dataSource = self
         collectionView.delegate = self
         
@@ -117,8 +118,7 @@ class MainViewController: UIViewController {
         }
     }
     
-    @objc
-    private func loadData() {
+    @objc private func loadData() {
         apiManager.search(searchBar) { [weak self] result in
             DispatchQueue.main.async {
                 if self?.photosCollectionView.refreshControl?.isRefreshing == false {
