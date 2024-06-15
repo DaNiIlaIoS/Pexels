@@ -87,7 +87,7 @@ class MainViewController: UIViewController {
         searchBar.placeholder = "search image".localized
         searchBar.delegate = self
         
-        searchTextArray = getSaveSearchText()
+        resetSearchTextArray()
     }
     
     // MARK: - Methods
@@ -147,12 +147,36 @@ class MainViewController: UIViewController {
         existingArray.append(searchText)
         
         UserDefaults.standard.set(existingArray, forKey: "userDefaults")
-        searchTextArray = existingArray
+        resetSearchTextArray()
     }
     
     private func getSaveSearchText() -> [String] {
         let array: [String] = UserDefaults.standard.stringArray(forKey: "userDefaults") ?? []
         return array
+    }
+    
+    private func getReversedSearchArray() -> [String] {
+        let reversedArray: [String] = getSaveSearchText().reversed()
+        return reversedArray
+    }
+    
+    private func getUniqueSearchArray() -> [String] {
+        var uniqueArray: [String] = []
+        getReversedSearchArray().forEach { value in
+            if !uniqueArray.contains(value) {
+                uniqueArray.append(value)
+            }
+        }
+        return uniqueArray
+    }
+    
+    private func resetSearchTextArray() {
+        self.searchTextArray = getUniqueSearchArray()
+    }
+    
+    private func deleteSearchText(at index: Int) {
+            searchTextArray.remove(at: index)
+            UserDefaults.standard.set(searchTextArray, forKey: "userDefaults")
     }
 }
 
@@ -196,12 +220,19 @@ extension MainViewController: UICollectionViewDataSource {
         switch collectionView {
         case photosCollectionView:
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PhotoCollectionViewCell", for: indexPath) as? PhotoCollectionViewCell else { return UICollectionViewCell() }
+            
             let photo = photos[indexPath.row]
             cell.loadImage(witch: photo)
+            
             return cell
         case historyCollectionView:
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "HistoryCollectionViewCell", for: indexPath) as? HistoryCollectionViewCell else { return UICollectionViewCell() }
+            
             cell.set(title: searchTextArray[indexPath.item])
+            cell.deleteButtonWasTapped = {
+                self.deleteSearchText(at: indexPath.item)
+            }
+            
             return cell
         default:
             return UICollectionViewCell()
@@ -212,11 +243,20 @@ extension MainViewController: UICollectionViewDataSource {
 // MARK: - UICollectionViewDelegateFlowLayout
 extension MainViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let photo = photos[indexPath.item]
-        let url = photo.src.large2X
         
-        let imageScrollViewController = ImageScrollViewController(imageURL: url)
-        self.navigationController?.pushViewController(imageScrollViewController, animated: true)
+        switch collectionView {
+        case photosCollectionView:
+            let photo = photos[indexPath.item]
+            let url = photo.src.large2X
+            
+            let imageScrollViewController = ImageScrollViewController(imageURL: url)
+            self.navigationController?.pushViewController(imageScrollViewController, animated: true)
+        case historyCollectionView:
+            let searchText = searchTextArray[indexPath.item]
+            searchBar.text = searchText
+            loadData()
+        default:
+            print("Unknown collection view")
+        }
     }
 }
-
