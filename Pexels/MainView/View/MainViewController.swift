@@ -173,6 +173,11 @@ class MainViewController: UIViewController {
     private func resetSearchTextArray() {
         self.searchTextArray = getUniqueSearchArray()
     }
+    
+    private func deleteSearchText(at index: Int) {
+            searchTextArray.remove(at: index)
+            UserDefaults.standard.set(searchTextArray, forKey: "userDefaults")
+    }
 }
 
 // MARK: - UISearchBarDelegate
@@ -215,12 +220,19 @@ extension MainViewController: UICollectionViewDataSource {
         switch collectionView {
         case photosCollectionView:
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PhotoCollectionViewCell", for: indexPath) as? PhotoCollectionViewCell else { return UICollectionViewCell() }
+            
             let photo = photos[indexPath.row]
             cell.loadImage(witch: photo)
+            
             return cell
         case historyCollectionView:
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "HistoryCollectionViewCell", for: indexPath) as? HistoryCollectionViewCell else { return UICollectionViewCell() }
+            
             cell.set(title: searchTextArray[indexPath.item])
+            cell.deleteButtonWasTapped = {
+                self.deleteSearchText(at: indexPath.item)
+            }
+            
             return cell
         default:
             return UICollectionViewCell()

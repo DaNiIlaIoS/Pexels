@@ -45,6 +45,17 @@ final class HistoryCollectionViewCell: UICollectionViewCell {
         return label
     }()
     
+    lazy var deleteButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setImage(UIImage(systemName: "xmark"), for: .normal)
+        button.tintColor = .red
+        button.addTarget(self, action: #selector(deleteButtonTapped(_:)), for: .touchUpInside)
+        return button
+    }()
+    
+    // MARK: - Properties
+    var deleteButtonWasTapped: (() -> ())?
+    
     // MARK: - Initializer
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -62,13 +73,14 @@ final class HistoryCollectionViewCell: UICollectionViewCell {
         cardView.addSubview(stackView)
         stackView.addArrangedSubview(clockImage)
         stackView.addArrangedSubview(historyLabel)
+        stackView.addArrangedSubview(deleteButton)
         
         setupConstraints()
     }
     private func setupConstraints() {
         mainView.snp.makeConstraints { make in
             make.leading.top.trailing.bottom.equalToSuperview()
-            make.height.equalTo(60)
+//            make.height.equalTo(60)
         }
         
         cardView.snp.makeConstraints { make in
@@ -88,5 +100,29 @@ final class HistoryCollectionViewCell: UICollectionViewCell {
     
     func set(title: String) {
         historyLabel.text = title
+    }
+    
+    @objc func deleteButtonTapped(_ sender: UIButton) {
+        bounce(button: sender) {
+            self.deleteButtonWasTapped?()
+        }
+    }
+    
+    func bounce(button: UIButton, completion: @escaping (()->())) {
+        UIView.animate(
+            withDuration: 0.3,
+            animations: {
+                button.transform = CGAffineTransform(scaleX: 0.5, y: 0.5)
+            },
+            completion: { _ in
+                UIView.animate(withDuration: 0.3) {
+                    button.transform = CGAffineTransform.identity
+                } completion: { completed in
+                    if completed {
+                        completion()
+                    }
+                }
+            }
+        )
     }
 }
