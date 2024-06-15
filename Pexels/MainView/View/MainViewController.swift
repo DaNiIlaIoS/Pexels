@@ -231,11 +231,20 @@ extension MainViewController: UICollectionViewDataSource {
 // MARK: - UICollectionViewDelegateFlowLayout
 extension MainViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let photo = photos[indexPath.item]
-        let url = photo.src.large2X
         
-        let imageScrollViewController = ImageScrollViewController(imageURL: url)
-        self.navigationController?.pushViewController(imageScrollViewController, animated: true)
+        switch collectionView {
+        case photosCollectionView:
+            let photo = photos[indexPath.item]
+            let url = photo.src.large2X
+            
+            let imageScrollViewController = ImageScrollViewController(imageURL: url)
+            self.navigationController?.pushViewController(imageScrollViewController, animated: true)
+        case historyCollectionView:
+            let searchText = searchTextArray[indexPath.item]
+            searchBar.text = searchText
+            loadData()
+        default:
+            print("Unknown collection view")
+        }
     }
 }
-
