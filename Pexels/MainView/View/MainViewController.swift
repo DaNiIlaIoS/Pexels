@@ -87,7 +87,7 @@ class MainViewController: UIViewController {
         searchBar.placeholder = "search image".localized
         searchBar.delegate = self
         
-        searchTextArray = getSaveSearchText()
+        resetSearchTextArray()
     }
     
     // MARK: - Methods
@@ -147,12 +147,21 @@ class MainViewController: UIViewController {
         existingArray.append(searchText)
         
         UserDefaults.standard.set(existingArray, forKey: "userDefaults")
-        searchTextArray = existingArray
+        resetSearchTextArray()
     }
     
     private func getSaveSearchText() -> [String] {
         let array: [String] = UserDefaults.standard.stringArray(forKey: "userDefaults") ?? []
         return array
+    }
+    
+    private func getReversedSearchArray() -> [String] {
+        let reversedArray: [String] = getSaveSearchText().reversed()
+        return reversedArray
+    }
+    
+    private func resetSearchTextArray() {
+        self.searchTextArray = getReversedSearchArray()
     }
 }
 
