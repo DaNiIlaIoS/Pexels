@@ -79,8 +79,8 @@ final class APIManager {
             completion(.failure(NetworkingError.networkingError(error)))
         } else if let data = data {
             do {
-                //                let jsonObject = try JSONSerialization.jsonObject(with: data)
-                //                print(jsonObject)
+                //let jsonObject = try JSONSerialization.jsonObject(with: data)
+                //print(jsonObject)
                 let model = try JSONDecoder().decode(SearchPhotosModel.self, from: data)
                 completion(.success(model.photos))
                 print(model)
