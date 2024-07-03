@@ -8,12 +8,7 @@
 import UIKit
 import SnapKit
 
-class MainViewController: UIViewController {
-    
-    //    @IBOutlet weak var searchBar: UISearchBar!
-    //    @IBOutlet weak var searchHistoryCollectionView: UICollectionView!
-    //    @IBOutlet weak var imagesCollectionView: UICollectionView!
-    
+class MainViewController: UIViewController {    
     // MARK: - GUI Variables
     private lazy var searchBar: UISearchBar = {
         let searchBar = UISearchBar()
@@ -225,6 +220,7 @@ extension MainViewController: UICollectionViewDataSource {
             cell.loadImage(witch: photo)
             
             return cell
+            
         case historyCollectionView:
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "HistoryCollectionViewCell", for: indexPath) as? HistoryCollectionViewCell else { return UICollectionViewCell() }
             
