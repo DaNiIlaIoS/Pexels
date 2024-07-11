@@ -23,9 +23,7 @@
 		48E3BF262BFB7670005DB32A /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48E3BF252BFB7670005DB32A /* SceneDelegate.swift */; };
 		48E3BF2D2BFB7672005DB32A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 48E3BF2C2BFB7672005DB32A /* Assets.xcassets */; };
 		48E3BF302BFB7672005DB32A /* Base in Resources */ = {isa = PBXBuildFile; fileRef = 48E3BF2F2BFB7672005DB32A /* Base */; };
-		48E3BF392BFB76C2005DB32A /* OnboardingViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 48E3BF382BFB76C2005DB32A /* OnboardingViewController.xib */; };
 		48E3BF3A2BFB76C2005DB32A /* OnboardingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48E3BF372BFB76C2005DB32A /* OnboardingViewController.swift */; };
-		48E3BF3D2BFBA742005DB32A /* OnboardingCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 48E3BF3C2BFBA742005DB32A /* OnboardingCollectionViewCell.xib */; };
 		48E3BF3E2BFBA742005DB32A /* OnboardingCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48E3BF3B2BFBA742005DB32A /* OnboardingCollectionViewCell.swift */; };
 		48E3BF402BFBAA70005DB32A /* OnboardingModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48E3BF3F2BFBAA70005DB32A /* OnboardingModel.swift */; };
 /* End PBXBuildFile section */
@@ -50,9 +48,7 @@
 		48E3BF2F2BFB7672005DB32A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		48E3BF312BFB7672005DB32A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		48E3BF372BFB76C2005DB32A /* OnboardingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingViewController.swift; sourceTree = "<group>"; };
-		48E3BF382BFB76C2005DB32A /* OnboardingViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = OnboardingViewController.xib; sourceTree = "<group>"; };
 		48E3BF3B2BFBA742005DB32A /* OnboardingCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingCollectionViewCell.swift; sourceTree = "<group>"; };
-		48E3BF3C2BFBA742005DB32A /* OnboardingCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = OnboardingCollectionViewCell.xib; sourceTree = "<group>"; };
 		48E3BF3F2BFBAA70005DB32A /* OnboardingModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -71,9 +67,7 @@
 		48598B552C077387006C7A4D /* View */ = {
 			isa = PBXGroup;
 			children = (
-				48E3BF382BFB76C2005DB32A /* OnboardingViewController.xib */,
 				48E3BF3B2BFBA742005DB32A /* OnboardingCollectionViewCell.swift */,
-				48E3BF3C2BFBA742005DB32A /* OnboardingCollectionViewCell.xib */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -275,8 +269,6 @@
 			files = (
 				48598B5F2C07764A006C7A4D /* Localizable.strings in Resources */,
 				48E3BF2D2BFB7672005DB32A /* Assets.xcassets in Resources */,
-				48E3BF392BFB76C2005DB32A /* OnboardingViewController.xib in Resources */,
-				48E3BF3D2BFBA742005DB32A /* OnboardingCollectionViewCell.xib in Resources */,
 				48E3BF302BFB7672005DB32A /* Base in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

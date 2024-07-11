@@ -11,4 +11,8 @@ extension String {
     var localized: String {
         NSLocalizedString(self, comment: "")
     }
+    
+    static let appOrange = "appOrange"
+    static let descriptionColor = "descriptionColor"
+    static let titleColor = "titleColor"
 }
