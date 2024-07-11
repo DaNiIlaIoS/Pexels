@@ -6,14 +6,57 @@
 //
 
 import UIKit
+import SnapKit
 
 class OnboardingViewController: UIViewController {
     
-    // MARK: - IBOutlets
-    @IBOutlet weak var collectionView: UICollectionView!
-    @IBOutlet weak var skipButton: UIButton!
-    @IBOutlet weak var nextButton: UIButton!
-    @IBOutlet weak var pageControl: UIPageControl!
+    // MARK: - GUI Variables
+    private lazy var layout: UICollectionViewFlowLayout = {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .horizontal
+        layout.minimumLineSpacing = 0
+        layout.minimumInteritemSpacing = 0
+        layout.itemSize = view.frame.size
+        return layout
+    }()
+    
+    private lazy var collectionView: UICollectionView = {
+        let collectionView = UICollectionView(frame: view.frame, collectionViewLayout: layout)
+        collectionView.dataSource = self
+        collectionView.delegate = self
+        collectionView.register(OnboardingCollectionViewCell.self, forCellWithReuseIdentifier: OnboardingCollectionViewCell.identifier)
+        collectionView.isPagingEnabled = true
+       return collectionView
+    }()
+    
+    private lazy var nextButton: UIButton = {
+       let button = UIButton()
+        button.setTitle("Next".localized, for: .normal)
+        button.setTitleColor(.white, for: .normal)
+        button.backgroundColor = UIColor(named: String.appOrange)
+        button.contentEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 10)
+        button.addTarget(self, action: #selector(nextButtonAction), for: .touchUpInside)
+        button.titleLabel?.font = .systemFont(ofSize: 21, weight: .bold)
+        return button
+    }()
+    
+    private lazy var skipButton: UIButton = {
+       let button = UIButton()
+        button.setTitle("Skip".localized, for: .normal)
+        button.setTitleColor(.white, for: .normal)
+        button.alpha = 0.8
+        button.backgroundColor = UIColor(named: String.appOrange)
+        button.contentEdgeInsets = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 0)
+        button.addTarget(self, action: #selector(skipButtonAction), for: .touchUpInside)
+        return button
+    }()
+    
+    private lazy var pageControl: UIPageControl = {
+       let pageControl = UIPageControl()
+        pageControl.currentPageIndicatorTintColor = UIColor(named: String.appOrange)
+        pageControl.pageIndicatorTintColor = UIColor(named: String.appOrange)?.withAlphaComponent(0.5)
+        return pageControl
+    }()
     
     // MARK: - Properties
     static let key = "UserDidSeeOnboarding"
@@ -28,37 +71,27 @@ class OnboardingViewController: UIViewController {
     // MARK: - Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        collectionView.register(UINib(nibName: OnboardingCollectionViewCell.identifier, bundle: nil), forCellWithReuseIdentifier: OnboardingCollectionViewCell.identifier)
-        collectionView.dataSource = self
-        collectionView.delegate = self
-        
-        nextButton.setTitle("Next".localized, for: .normal)
-        skipButton.setTitle("Skip".localized, for: .normal)
-        
+        setupUI()
         generatePages()
     }
     
     override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        
-        skipButton.layer.cornerRadius = skipButton.frame.height / 2
         nextButton.layer.cornerRadius = nextButton.frame.height / 2
+        skipButton.layer.cornerRadius = skipButton.frame.height / 2
     }
     
     // MARK: - IBActions
-    @IBAction func skipButtonAction(_ sender: UIButton) {
+    @objc func skipButtonAction() {
         start()
     }
     
-    @IBAction func nextButtonAction(_ sender: UIButton) {
+    @objc func nextButtonAction() {
         
         if pageControl.currentPage == pageControl.numberOfPages - 1 {
             start()
             
         } else {
             pageControl.currentPage += 1
-            
             collectionView.scrollToItem(at: IndexPath(item: pageControl.currentPage, section: 0),
                                         at: .centeredHorizontally,
                                         animated: true)
@@ -99,8 +132,41 @@ class OnboardingViewController: UIViewController {
                                  title: "Happiness",
                                  subtitle: "While working the app reminds you to smile, laugh, walk and talk with those who matters.")]
     }
+    
+    private func setupUI() {
+        view.backgroundColor = .white
+        
+        view.addSubview(collectionView)
+        view.addSubview(nextButton)
+        view.addSubview(skipButton)
+        view.addSubview(pageControl)
+        
+        setupConstraints()
+    }
+    
+    private func setupConstraints() {
+        nextButton.snp.makeConstraints { make in
+            make.bottom.equalTo(view.safeAreaLayoutGuide).inset(100)
+            make.trailing.equalToSuperview().inset(-20)
+            make.width.equalToSuperview().multipliedBy(0.4)
+            make.height.equalTo(54)
+        }
+        
+        skipButton.snp.makeConstraints { make in
+            make.centerY.equalTo(nextButton.snp.centerY)
+            make.leading.equalToSuperview().inset(-20)
+            make.width.equalTo(nextButton).multipliedBy(0.9)
+            make.height.equalTo(44)
+        }
+        
+        pageControl.snp.makeConstraints { make in
+            make.bottom.equalTo(nextButton.snp.top).offset(-30)
+            make.leading.trailing.equalToSuperview().inset(20)
+        }
+    }
 }
 
+// MARK: - UICollectionViewDataSource
 extension OnboardingViewController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -108,23 +174,20 @@ extension OnboardingViewController: UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: OnboardingCollectionViewCell.identifier, for: indexPath) as!
-        OnboardingCollectionViewCell
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: OnboardingCollectionViewCell.identifier, for: indexPath) as? OnboardingCollectionViewCell else { return UICollectionViewCell() }
         
         let onboardingModel = pages[indexPath.item]
-        cell.setup(onboardingModel: onboardingModel)
+        cell.configure(item: onboardingModel)
         
         return cell
     }
 }
 
-extension OnboardingViewController: UICollectionViewDelegateFlowLayout {
+extension OnboardingViewController: UICollectionViewDelegate {
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return collectionView.frame.size
-    }
 }
 
+// MARK: - UIScrollViewDelegate
 extension OnboardingViewController: UIScrollViewDelegate {
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         
