@@ -62,14 +62,6 @@ class MainViewController: UIViewController {
         }
     }
     // MARK: - Life Cycle
-    init(apiManager: APIManager = APIManager.shared) {
-        self.apiManager = apiManager
-        super.init(nibName: nil, bundle: nil)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
