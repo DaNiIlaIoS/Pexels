@@ -54,21 +54,21 @@ final class APIManager {
         
         urlSession.resume()
     }
-    func getImage(url: String, completion: @escaping (Result<Data, Error>) -> Void) {
-        guard let url = URL(string: url) else {
-            print("Could't create an url")
-            return
-        }
-        let session = URLSession.shared.dataTask(with: url) { data, response, error in
-            if let data = data {
-                completion(.success(data))
-            }
-            if let error = error {
-                completion(.failure(error))
-            }
-        }
-        session.resume()
-    }
+//    func getImage(url: String, completion: @escaping (Result<Data, Error>) -> Void) {
+//        guard let url = URL(string: url) else {
+//            print("Could't create an url")
+//            return
+//        }
+//        let session = URLSession.shared.dataTask(with: url) { data, response, error in
+//            if let data = data {
+//                completion(.success(data))
+//            }
+//            if let error = error {
+//                completion(.failure(error))
+//            }
+//        }
+//        session.resume()
+//    }
     
     // MARK: - Handle Response
     private func searchPhotosHandler(data: Data?,
