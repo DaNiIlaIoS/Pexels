@@ -34,7 +34,6 @@ class OnboardingViewController: UIViewController {
         button.setTitle("Next".localized, for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.backgroundColor = UIColor(named: String.appOrange)
-        button.contentEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 10)
         button.addTarget(self, action: #selector(nextButtonAction), for: .touchUpInside)
         button.titleLabel?.font = .systemFont(ofSize: 21, weight: .bold)
         return button
@@ -46,7 +45,6 @@ class OnboardingViewController: UIViewController {
         button.setTitleColor(.white, for: .normal)
         button.alpha = 0.8
         button.backgroundColor = UIColor(named: String.appOrange)
-        button.contentEdgeInsets = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 0)
         button.addTarget(self, action: #selector(skipButtonAction), for: .touchUpInside)
         return button
     }()
