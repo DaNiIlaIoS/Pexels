@@ -29,6 +29,15 @@ final class ImageScrollViewController: UIViewController {
         return indicator
     }()
     
+    private lazy var shareButton: UIButton = {
+       let button = UIButton()
+        button.setImage(UIImage(systemName: "square.and.arrow.up"), for: .normal)
+        button.setTitle("Tap to share", for: .normal)
+        button.setTitleColor(.systemBlue, for: .normal)
+        button.addTarget(self, action: #selector(shareAction), for: .touchUpInside)
+        return button
+    }()
+    
     // MARK: - Properties
     private var imageURL: String
     
@@ -56,6 +65,7 @@ final class ImageScrollViewController: UIViewController {
         view.addSubview(scrollView)
         scrollView.addSubview(activityIndicator)
         scrollView.addSubview(imageView)
+        scrollView.addSubview(shareButton)
         
         setupConstraints()
     }
@@ -70,9 +80,18 @@ final class ImageScrollViewController: UIViewController {
         }
         
         imageView.snp.makeConstraints { make in
-            make.leading.trailing.top.bottom.equalToSuperview()
+            make.leading.trailing.top.equalToSuperview()
             make.width.height.equalToSuperview().multipliedBy(1)
         }
+        
+        shareButton.snp.makeConstraints { make in
+            make.bottom.leading.trailing.equalTo(view.safeAreaLayoutGuide)
+        }
+    }
+    
+    @objc private func shareAction() {
+        let shareController = UIActivityViewController(activityItems: [imageView.image!], applicationActivities: nil)
+        present(shareController, animated: true)
     }
     
     private func loadImage() {
