@@ -8,12 +8,7 @@
 import UIKit
 import SnapKit
 
-class MainViewController: UIViewController {
-    
-    //    @IBOutlet weak var searchBar: UISearchBar!
-    //    @IBOutlet weak var searchHistoryCollectionView: UICollectionView!
-    //    @IBOutlet weak var imagesCollectionView: UICollectionView!
-    
+class MainViewController: UIViewController {    
     // MARK: - GUI Variables
     private lazy var searchBar: UISearchBar = {
         let searchBar = UISearchBar()
@@ -50,6 +45,7 @@ class MainViewController: UIViewController {
         
         collectionView.refreshControl = UIRefreshControl()
         collectionView.refreshControl?.addTarget(self, action: #selector(loadData), for: .valueChanged)
+
         collectionView.dataSource = self
         collectionView.delegate = self
         
@@ -66,14 +62,6 @@ class MainViewController: UIViewController {
         }
     }
     // MARK: - Life Cycle
-    init(apiManager: APIManager = APIManager.shared) {
-        self.apiManager = apiManager
-        super.init(nibName: nil, bundle: nil)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -117,8 +105,7 @@ class MainViewController: UIViewController {
         }
     }
     
-    @objc
-    private func loadData() {
+    @objc private func loadData() {
         apiManager.search(searchBar) { [weak self] result in
             DispatchQueue.main.async {
                 if self?.photosCollectionView.refreshControl?.isRefreshing == false {
@@ -225,6 +212,7 @@ extension MainViewController: UICollectionViewDataSource {
             cell.loadImage(witch: photo)
             
             return cell
+            
         case historyCollectionView:
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "HistoryCollectionViewCell", for: indexPath) as? HistoryCollectionViewCell else { return UICollectionViewCell() }
             

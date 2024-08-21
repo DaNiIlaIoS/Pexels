@@ -54,21 +54,21 @@ final class APIManager {
         
         urlSession.resume()
     }
-    func getImage(url: String, completion: @escaping (Result<Data, Error>) -> Void) {
-        guard let url = URL(string: url) else {
-            print("Could't create an url")
-            return
-        }
-        let session = URLSession.shared.dataTask(with: url) { data, response, error in
-            if let data = data {
-                completion(.success(data))
-            }
-            if let error = error {
-                completion(.failure(error))
-            }
-        }
-        session.resume()
-    }
+//    func getImage(url: String, completion: @escaping (Result<Data, Error>) -> Void) {
+//        guard let url = URL(string: url) else {
+//            print("Could't create an url")
+//            return
+//        }
+//        let session = URLSession.shared.dataTask(with: url) { data, response, error in
+//            if let data = data {
+//                completion(.success(data))
+//            }
+//            if let error = error {
+//                completion(.failure(error))
+//            }
+//        }
+//        session.resume()
+//    }
     
     // MARK: - Handle Response
     private func searchPhotosHandler(data: Data?,
@@ -79,8 +79,8 @@ final class APIManager {
             completion(.failure(NetworkingError.networkingError(error)))
         } else if let data = data {
             do {
-                //                let jsonObject = try JSONSerialization.jsonObject(with: data)
-                //                print(jsonObject)
+                //let jsonObject = try JSONSerialization.jsonObject(with: data)
+                //print(jsonObject)
                 let model = try JSONDecoder().decode(SearchPhotosModel.self, from: data)
                 completion(.success(model.photos))
                 print(model)
