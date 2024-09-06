@@ -26,11 +26,11 @@ class OnboardingViewController: UIViewController {
         collectionView.delegate = self
         collectionView.register(OnboardingCollectionViewCell.self, forCellWithReuseIdentifier: OnboardingCollectionViewCell.identifier)
         collectionView.isPagingEnabled = true
-       return collectionView
+        return collectionView
     }()
     
     private lazy var nextButton: UIButton = {
-       let button = UIButton()
+        let button = UIButton()
         button.setTitle("Next".localized, for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.backgroundColor = UIColor(named: String.appOrange)
@@ -40,7 +40,7 @@ class OnboardingViewController: UIViewController {
     }()
     
     private lazy var skipButton: UIButton = {
-       let button = UIButton()
+        let button = UIButton()
         button.setTitle("Skip".localized, for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.alpha = 0.8
@@ -50,27 +50,26 @@ class OnboardingViewController: UIViewController {
     }()
     
     private lazy var pageControl: UIPageControl = {
-       let pageControl = UIPageControl()
+        let pageControl = UIPageControl()
+        pageControl.numberOfPages = pages.count
+        pageControl.addTarget(self, action: #selector(pageAction(sender: )), for: .valueChanged)
         pageControl.currentPageIndicatorTintColor = UIColor(named: String.appOrange)
         pageControl.pageIndicatorTintColor = UIColor(named: String.appOrange)?.withAlphaComponent(0.5)
         return pageControl
     }()
     
+    @objc func pageAction(sender: UIPageControl) {
+        collectionView.scrollToItem(at: IndexPath(item: pageControl.currentPage, section: 0), at: .centeredHorizontally, animated: true)
+    }
+    
     // MARK: - Properties
     static let key = "UserDidSeeOnboarding"
-    
-    private var pages: [OnboardingModel] = [] {
-        didSet {
-            pageControl.numberOfPages = pages.count
-            collectionView.reloadData()
-        }
-    }
+    private var pages: [OnboardingModel] = OnboardingModel.generatePages()
     
     // MARK: - Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-        generatePages()
     }
     
     override func viewDidLayoutSubviews() {
@@ -117,18 +116,6 @@ class OnboardingViewController: UIViewController {
             nextButton.setTitle("Next".localized, for: .normal)
             skipButton.isHidden = false
         }
-    }
-    
-    private func generatePages() {
-        pages = [OnboardingModel(imageName: "onboarding1",
-                                 title: "Access Anywhere",
-                                 subtitle: "The video call feature can be accessed from anywhere in your house to help you."),
-                 OnboardingModel(imageName: "onboarding2",
-                                 title: "Don’t Feel Alone",
-                                 subtitle: "Nobody likes to be alone and the built-in group video call feature helps you connect."),
-                 OnboardingModel(imageName: "onboarding3",
-                                 title: "Happiness",
-                                 subtitle: "While working the app reminds you to smile, laugh, walk and talk with those who matters.")]
     }
     
     private func setupUI() {
@@ -187,12 +174,9 @@ extension OnboardingViewController: UICollectionViewDelegate {
 
 // MARK: - UIScrollViewDelegate
 extension OnboardingViewController: UIScrollViewDelegate {
-    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        
-        print("scrollViewDidEndDecelerating \(scrollView.contentOffset.x)")
-        
-        pageControl.currentPage = Int(scrollView.contentOffset.x / scrollView.frame.width)
-        
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let pageIndex = round(scrollView.contentOffset.x / scrollView.frame.width)
+        pageControl.currentPage = Int(pageIndex)
         handlePagesChanges()
     }
 }
