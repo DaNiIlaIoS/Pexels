@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-class MainViewController: UIViewController {    
+class MainViewController: UIViewController {
     // MARK: - GUI Variables
     private lazy var searchBar: UISearchBar = {
         let searchBar = UISearchBar()
@@ -45,7 +45,7 @@ class MainViewController: UIViewController {
         
         collectionView.refreshControl = UIRefreshControl()
         collectionView.refreshControl?.addTarget(self, action: #selector(loadData), for: .valueChanged)
-
+        
         collectionView.dataSource = self
         collectionView.delegate = self
         
@@ -93,15 +93,21 @@ class MainViewController: UIViewController {
             make.leading.top.trailing.equalTo(view.safeAreaLayoutGuide)
         }
         historyCollectionView.snp.makeConstraints { make in
+            make.height.equalTo(60)
             make.top.equalTo(searchBar.snp.bottom)
             make.leading.trailing.equalToSuperview().inset(8)
-            make.height.equalTo(60)
         }
         
         photosCollectionView.snp.makeConstraints { make in
             make.top.equalTo(historyCollectionView.snp.bottom).offset(5)
             make.bottom.equalToSuperview()
             make.leading.trailing.equalToSuperview().inset(5)
+        }
+    }
+    
+    private func updateHistoryHeight() {
+        historyCollectionView.snp.updateConstraints { make in
+            make.height.equalTo(searchTextArray.isEmpty ? 0 : 60)
         }
     }
     
@@ -135,6 +141,7 @@ class MainViewController: UIViewController {
         
         UserDefaults.standard.set(existingArray, forKey: "userDefaults")
         resetSearchTextArray()
+        updateHistoryHeight()
     }
     
     private func getSaveSearchText() -> [String] {
@@ -162,8 +169,9 @@ class MainViewController: UIViewController {
     }
     
     private func deleteSearchText(at index: Int) {
-            searchTextArray.remove(at: index)
-            UserDefaults.standard.set(searchTextArray, forKey: "userDefaults")
+        searchTextArray.remove(at: index)
+        UserDefaults.standard.set(searchTextArray, forKey: "userDefaults")
+        updateHistoryHeight()
     }
 }
 
